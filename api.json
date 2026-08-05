@@ -1,0 +1,197 @@
+{
+	"openapi": "3.0.3",
+	"info": {
+		"version": "0.1.0",
+		"title": "betmas-id-manager",
+		"description": "Standalone id-management service for BetaMasaheft: hands out and tracks entity ids for manuscripts, works, persons, places, narratives, studies, institutions and authority-files."
+	},
+	"servers": [
+		{ "url": "/exist/apps/betmas-id-manager", "description": "Relative URL using the current host and port" }
+	],
+	"security": [],
+	"paths": {
+		"/types": {
+			"get": {
+				"summary": "List known entity types and how they're numbered",
+				"operationId": "api:list-types",
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "array",
+									"items": { "$ref": "#/components/schemas/TypeInfo" }
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/ids/{type}": {
+			"post": {
+				"summary": "Reserve a new id (auto-numbered types) or register a caller-chosen id (manual types)",
+				"operationId": "api:reserve-id",
+				"parameters": [
+					{
+						"name": "type",
+						"in": "path",
+						"required": true,
+						"schema": { "type": "string" }
+					}
+				],
+				"requestBody": {
+					"required": false,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"suffix": {
+										"type": "string",
+										"description": "auto-numbered types only: free-text slug appended after the sequence number"
+									},
+									"id": {
+										"type": "string",
+										"description": "manual types only: the full id to register verbatim"
+									}
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"201": {
+						"description": "Created",
+						"content": { "application/json": { "schema": { "$ref": "#/components/schemas/IssuedId" } } }
+					},
+					"400": { "description": "Unknown type" },
+					"409": { "description": "Manual id already registered" }
+				}
+			}
+		},
+		"/id/{id}": {
+			"get": {
+				"summary": "Look up a previously issued id",
+				"operationId": "api:get-id",
+				"parameters": [
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"schema": { "type": "string" }
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": { "application/json": { "schema": { "$ref": "#/components/schemas/IssuedId" } } }
+					},
+					"404": { "description": "Unknown id" }
+				}
+			}
+		},
+		"/ids": {
+			"get": {
+				"summary": "List issued ids, optionally filtered by type",
+				"operationId": "api:list-ids",
+				"parameters": [
+					{
+						"name": "type",
+						"in": "query",
+						"required": false,
+						"schema": { "type": "string" }
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "array",
+									"items": { "$ref": "#/components/schemas/IssuedId" }
+								}
+							}
+						}
+					},
+					"400": { "description": "Unknown type filter" }
+				}
+			}
+		},
+		"/types/{type}/reset": {
+			"post": {
+				"summary": "Test/dev utility: reset a type's counter and purge its issued ids",
+				"operationId": "api:reset-type",
+				"parameters": [
+					{
+						"name": "type",
+						"in": "path",
+						"required": true,
+						"schema": { "type": "string" }
+					}
+				],
+				"requestBody": {
+					"required": false,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"value": {
+										"type": "integer",
+										"description": "auto-numbered types only: the counter value to reset to (default 0)"
+									}
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"type": { "type": "string" },
+										"mode": { "type": "string" },
+										"value": { "type": "integer" },
+										"purged": { "type": "integer" }
+									}
+								}
+							}
+						}
+					},
+					"400": { "description": "Unknown type" }
+				}
+			}
+		}
+	},
+	"components": {
+		"schemas": {
+			"TypeInfo": {
+				"type": "object",
+				"properties": {
+					"type": { "type": "string" },
+					"prefix": { "type": "string", "nullable": true },
+					"mode": { "type": "string", "enum": ["auto", "manual"] }
+				}
+			},
+			"IssuedId": {
+				"type": "object",
+				"properties": {
+					"id": { "type": "string" },
+					"type": { "type": "string" },
+					"mode": { "type": "string", "enum": ["auto", "manual"] },
+					"prefix": { "type": "string" },
+					"sequence": { "type": "integer" },
+					"suffix": { "type": "string" },
+					"createdAt": { "type": "string", "format": "date-time" }
+				}
+			}
+		}
+	}
+}

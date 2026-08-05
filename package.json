@@ -1,0 +1,30 @@
+{
+	"name": "betmas-id-manager",
+	"version": "1.0.0",
+	"description": "Standalone id-management service for BetaMasaheft - exist-db application",
+	"private": true,
+	"devDependencies": {
+		"@existdb/xst": "^4.1.2",
+		"ajv": "^8.20.0",
+		"ajv-draft-04": "^1.0.0",
+		"ajv-formats": "^3.0.1",
+		"cypress": "^15.19.0",
+		"husky": "^9.1.7",
+		"lint-staged": "^17.1.1",
+		"prettier": "^3.9.6",
+		"prettier-plugin-xquery": "^1.6.3"
+	},
+	"scripts": {
+		"format:check": "prettier --check .",
+		"format:write": "prettier --write .",
+		"test": "cypress run",
+		"test:concurrency": "node tests/concurrency-stress.mjs",
+		"validate:openapi": "node scripts/validate-openapi.cjs",
+		"deploy:dev": "ant && EXISTDB_SERVER=http://localhost:8080 EXISTDB_USER=admin EXISTDB_PASS= xst package install local-files build/*.xar",
+		"prepare": "husky"
+	},
+	"lint-staged": {
+		"*": "prettier --write --ignore-unknown",
+		"api.json": "node scripts/validate-openapi.cjs"
+	}
+}

@@ -1,0 +1,35 @@
+services:
+  exist:
+    build:
+      context: .
+    image: betmas-id-manager-exist:local
+    container_name: exist
+    ports:
+      - "8080:8080"
+    volumes:
+      - betmas-id-manager-data:/exist/data
+    # The base image ships a HEALTHCHECK with no explicit timing (Docker
+    # defaults: 30s interval, 0s start_period). Tighten it - nothing else
+    # installs at this boot, everything needed is already baked in.
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "java",
+          "org.exist.start.Main",
+          "client",
+          "--no-gui",
+          "--user",
+          "guest",
+          "--password",
+          "guest",
+          "--xpath",
+          "system:get-version()",
+        ]
+      interval: 2s
+      timeout: 5s
+      start_period: 8s
+      retries: 3
+
+volumes:
+  betmas-id-manager-data:

@@ -1,0 +1,16 @@
+name: Install smoke
+
+# Pure install smoke: does this package autodeploy cleanly into a bare
+# eXist, resolving its declared dependency (roaster) from the public
+# registry? The full stack + Cypress integration lane lives in exist.yml.
+# Unlike betmasweb/BetMasApi, there are no undeclared extra dependencies to
+# hand over here - expath-pkg.xml already declares everything this needs.
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  smoke:
+    uses: BetaMasaheft/.github/.github/workflows/install-smoke.yml@main

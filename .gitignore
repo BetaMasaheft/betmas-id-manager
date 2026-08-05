@@ -1,0 +1,4 @@
+build/
+node_modules/
+tests/cypress/screenshots/
+tests/cypress/videos/

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<meta xmlns="http://exist-db.org/xquery/repo">
+    <description>Standalone ID-management service for BetaMasaheft: hands out and tracks entity ids for manuscripts, works, persons, places, narratives, studies, institutions and authority-files.</description>
+    <website/>
+    <status>alpha</status>
+    <license>GNU-LGPL</license>
+    <copyright>true</copyright>
+    <type>application</type>
+    <target>betmas-id-manager</target>
+    <finish>finish.xq</finish>
+    <permissions user="admin" group="dba" mode="rwxrwxr-x"/>
+</meta>
