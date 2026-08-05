@@ -1,5 +1,7 @@
 xquery version "3.1" encoding "UTF-8";
 
+(: This namespace declaration is needed for Roaster :)
+declare namespace output = "http://www.w3.org/2010/xslt-xquery-serialization";
 declare namespace api = "https://betamasaheft.eu/betmas-id-manager/api";
 declare namespace bimerrors = "https://betamasaheft.eu/betmas-id-manager/errors";
 
