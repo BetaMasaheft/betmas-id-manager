@@ -4,18 +4,20 @@ declare namespace sm = "http://exist-db.org/xquery/securitymanager";
 
 declare variable $target external;
 
-(: Runs on every install/upgrade of an already-deployed instance, so this
-   must be idempotent: never reseed counters.xml if it already exists, or a
-   redeploy would silently wipe live counter state.
-
-   The data collection is deliberately NOT nested under $target (this app's
-   own deployed collection, /db/apps/betmas-id-manager): eXist's package
-   deployment removes and recreates that whole tree on reinstall/upgrade -
-   confirmed empirically, a forced reinstall during development wiped
-   everything stored there, counters included. A sibling collection under
-   /db/apps, outside this app's own lifecycle, is what actually survives a
-   redeploy - matches how betmasweb's corpus lives at /db/apps/expanded
-   rather than nested inside /db/apps/BetMasWeb. :)
+(:~
+ : Runs on every install/upgrade of an already-deployed instance, so this
+ : must be idempotent: never reseed counters.xml if it already exists, or a
+ : redeploy would silently wipe live counter state.
+ :
+ : The data collection is deliberately NOT nested under $target (this app's
+ : own deployed collection, /db/apps/betmas-id-manager): eXist's package
+ : deployment removes and recreates that whole tree on reinstall/upgrade -
+ : confirmed empirically, a forced reinstall during development wiped
+ : everything stored there, counters included. A sibling collection under
+ : /db/apps, outside this app's own lifecycle, is what actually survives a
+ : redeploy - matches how betmasweb's corpus lives at /db/apps/expanded
+ : rather than nested inside /db/apps/BetMasWeb.
+ :)
 
 declare variable $local:apps-collection := "/db/apps";
 
@@ -27,9 +29,9 @@ declare variable $local:counters-doc := $local:data-collection || "/counters.xml
 
 declare variable $local:auto-types := ("works", "studies", "narratives", "persons", "places", "institutions");
 
-(: unauthenticated internal service in this pass - see plan's "out of scope"
-   note on auth; world-writable so unauthenticated REST requests (running as
-   guest) can store/update data. :)
+(:~
+ : world-writable so unauthenticated REST requests (running as guest) can store/update data.
+ :)
 declare function local:open-up($collection-or-resource as xs:string) {
 	sm:chmod(xs:anyURI($collection-or-resource), "rwxrwxrwx")
 };
