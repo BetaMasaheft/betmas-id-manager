@@ -21,7 +21,7 @@ ARG BUILDER_IMAGE=ghcr.io/eeditiones/builder:latest
 # package repo rather than depending on any BetMas-specific base image, so
 # this stays genuinely standalone. Version matches expath-pkg.xml's
 # semver-min.
-ARG ROASTER_VERSION=1.12.1
+ARG ROASTER_VERSION=1.13.0
 ARG PUBLIC_REPO=https://exist-db.org/exist/apps/public-repo/public
 
 FROM ${BUILDER_IMAGE} AS build
