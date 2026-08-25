@@ -1,18 +1,18 @@
 #!/usr/bin/env node
 /**
- * Concurrency stress test for the atomic counter idiom in modules/ids.xqm.
+ * Concurrency stress test for the atomic counter idiom in src/store.ts.
  *
- * This is the actual point of the whole rewrite: prove that N truly
- * concurrent POST /ids/{type} requests produce exactly the sequence numbers
- * {1..N}, no duplicates, no gaps - not just that the code reads correctly.
- * Not run via Cypress: Cypress serializes cy.request() calls, so it can't
- * fire genuinely parallel raw HTTP requests the way this needs.
+ * This proves that N truly concurrent POST /ids/{type} requests produce
+ * exactly the sequence numbers {1..N}, no duplicates, no gaps - not just
+ * that the code reads correctly. Runs against a real running server (not
+ * in-process) so requests are genuinely concurrent at the network/event-loop
+ * level, not just sequential awaits.
  */
-const BASE_URL = process.env.BASE_URL || "http://localhost:8080/exist/apps/betmas-id-manager";
+const BASE_URL = process.env.BASE_URL || "http://localhost:8080";
 const TYPE = process.env.CONCURRENCY_TYPE || "works";
 const N = Number(process.env.CONCURRENCY_N || 50);
 
-async function main() {
+async function main(): Promise<void> {
 	console.log(`resetting counter for type=${TYPE} at ${BASE_URL} ...`);
 	const resetRes = await fetch(`${BASE_URL}/types/${TYPE}/reset`, {
 		method: "POST",
@@ -35,7 +35,7 @@ async function main() {
 	);
 
 	const responses = await Promise.all(requests);
-	const bodies = await Promise.all(responses.map((r) => r.json()));
+	const bodies: { sequence: number }[] = await Promise.all(responses.map((r) => r.json()));
 
 	const failures = responses.filter((r) => r.status !== 201);
 	if (failures.length > 0) {

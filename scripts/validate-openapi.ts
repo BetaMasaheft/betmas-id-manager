@@ -4,11 +4,14 @@
  * Schema: schema/openapi-3.0.json — vendored from
  * https://spec.openapis.org/oas/3.0/schema/2021-09-28
  */
-const fs = require("node:fs");
-const path = require("node:path");
-const Ajv4 = require("ajv-draft-04");
-const addFormats = require("ajv-formats");
+import fs from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import Ajv4 from "ajv-draft-04";
+import addFormats from "ajv-formats";
+import type { ErrorObject } from "ajv";
 
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.join(__dirname, "..");
 const schemaId = "https://spec.openapis.org/oas/3.0/schema/2021-09-28";
 const specPath = path.resolve(root, process.argv[2] || "api.json");
@@ -18,7 +21,7 @@ const ajv = new Ajv4({ allErrors: true, strict: false });
 addFormats(ajv);
 ajv.addSchema(JSON.parse(fs.readFileSync(schemaPath, "utf8")), schemaId);
 
-const validate = ajv.getSchema(schemaId);
+const validate = ajv.getSchema(schemaId)!;
 const data = JSON.parse(fs.readFileSync(specPath, "utf8"));
 const rel = path.relative(root, specPath) || specPath;
 
@@ -27,7 +30,7 @@ if (validate(data)) {
 	process.exit(0);
 }
 
-const errors = (validate.errors || []).map((error) => ({
+const errors = (validate.errors || []).map((error: ErrorObject) => ({
 	path: error.instancePath || "/",
 	message: error.message,
 	keyword: error.keyword,

@@ -1,9 +1,7 @@
 name: Release
 
-# A pushed vX.Y.Z tag is the single trigger for cutting a release: build the
-# xar, build+push a matching versioned Docker image, and publish both
-# together as a GitHub Release. Bump expath-pkg.xml's version and tag that
-# same commit to release.
+# A pushed vX.Y.Z tag is the single trigger for building and pushing a
+# matching versioned Docker image, published together as a GitHub Release.
 on:
   push:
     tags: ["v*"]
@@ -26,33 +24,9 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      # Fail loudly on a mismatch instead of publishing an image/xar pair
-      # that's tagged differently from what expath-pkg.xml itself claims.
-      # xmllint (not grep) to read the <package> element's version attribute
-      # specifically - a plain "version=" grep's first hit in the file is
-      # the XML declaration's version="1.0", not the package's.
-      - name: Resolve and verify version
+      - name: Resolve version
         id: version
-        run: |
-          sudo apt-get update
-          sudo apt-get -y install libxml2-utils
-          tag="${GITHUB_REF_NAME}"
-          version="${tag#v}"
-          pkg_version=$(xmllint --xpath 'string(/*[local-name()="package"]/@version)' expath-pkg.xml)
-          if [ "$version" != "$pkg_version" ]; then
-            echo "::error::Tag $tag (version $version) does not match expath-pkg.xml version $pkg_version"
-            exit 1
-          fi
-          echo "version=$version" >> "$GITHUB_OUTPUT"
-
-      - name: Install Java
-        uses: actions/setup-java@v5
-        with:
-          distribution: "temurin"
-          java-version: "21"
-
-      - name: Build xar
-        run: ant
+        run: echo "version=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v4
@@ -76,9 +50,9 @@ jobs:
           tags: |
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.version.outputs.version }}
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
-          cache-from: type=gha,scope=exist
+          cache-from: type=gha
           # ignore-error: a failed cache export must not fail an otherwise successful build
-          cache-to: type=gha,mode=max,scope=exist,ignore-error=true
+          cache-to: type=gha,mode=max,ignore-error=true
 
       - name: Create GitHub release
         uses: softprops/action-gh-release@v3
@@ -86,5 +60,4 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           name: v${{ steps.version.outputs.version }}
-          files: build/*.xar
           generate_release_notes: true

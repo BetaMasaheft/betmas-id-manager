@@ -1,7 +1,8 @@
 node_modules
-build
+data
 .git
 .github
-tests/cypress/screenshots
-tests/cypress/videos
+.husky
+test
+tests
 *.md

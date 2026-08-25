@@ -1,30 +1,39 @@
 {
 	"name": "betmas-id-manager",
 	"version": "1.0.0",
-	"description": "Standalone id-management service for BetaMasaheft - exist-db application",
+	"description": "Standalone id-management service for BetaMasaheft - Node.js/TypeScript implementation",
 	"private": true,
+	"type": "module",
+	"engines": {
+		"node": ">=24"
+	},
+	"dependencies": {
+		"fontoxpath": "^3.34.0",
+		"slimdom": "^4.3.5"
+	},
 	"devDependencies": {
-		"@existdb/xst": "^4.1.2",
+		"@types/node": "^24.0.0",
 		"ajv": "^8.20.0",
 		"ajv-draft-04": "^1.0.0",
 		"ajv-formats": "^3.0.1",
-		"cypress": "^15.21.0",
 		"husky": "^9.1.7",
 		"lint-staged": "^17.3.0",
 		"prettier": "^3.9.6",
-		"prettier-plugin-xquery": "^1.6.3"
+		"typescript": "^5.9.0"
 	},
 	"scripts": {
+		"start": "node src/server.ts",
+		"dev": "node --watch src/server.ts",
+		"test": "node --test",
+		"test:concurrency": "node tests/concurrency-stress.ts",
+		"typecheck": "tsc",
 		"format:check": "prettier --check .",
 		"format:write": "prettier --write .",
-		"test": "cypress run",
-		"test:concurrency": "node tests/concurrency-stress.mjs",
-		"validate:openapi": "node scripts/validate-openapi.cjs",
-		"deploy:dev": "ant && EXISTDB_SERVER=http://localhost:8080 EXISTDB_USER=admin EXISTDB_PASS= xst package install local-files build/*.xar",
-		"prepare": "husky"
+		"validate:openapi": "node scripts/validate-openapi.ts",
+		"prepare": "husky || true"
 	},
 	"lint-staged": {
 		"*": "prettier --write --ignore-unknown",
-		"api.json": "node scripts/validate-openapi.cjs"
+		"api.json": "node scripts/validate-openapi.ts"
 	}
 }
