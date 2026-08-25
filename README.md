@@ -6,17 +6,6 @@ and authority-files, as a small Node.js service backed by its own Docker
 volume - so the rest of the BetMas/betmasweb stack can stay stateless and be
 redeployed freely.
 
-Replaces the id-generation logic that currently lives inline in
-`edit/save-new-entity.xql` (in both `betmasweb` and `BetMas`), which scans the
-live collection for the current max numeric id and increments it - a
-scan-and-increment with a real race condition between the scan and the
-eventual store. This service centralizes that bookkeeping behind a small
-REST API with its own durable, atomically-updated counter state.
-
-**This service is not wired into `save-new-entity.xql` yet** - see the
-project's implementation plan for what's in and out of scope for the current
-pass.
-
 ## Entity types
 
 | Collection      | Prefix | Mode   | Format                               |
