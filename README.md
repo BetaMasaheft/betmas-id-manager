@@ -43,6 +43,7 @@ unpadded beyond that (`...0999` then `...1000`) - this replicates
 | GET    | `/id/{id}`            | Look up a previously issued id (singular path - see api.xql comment on why) |
 | GET    | `/ids?type=`          | List issued ids, optionally filtered by type                                |
 | POST   | `/types/{type}/reset` | Test/dev utility: reset a counter and purge its issued ids                  |
+| POST   | `/types/{type}/seed`  | Bulk-register ids from an external system of record (manual types only)     |
 
 See `api.json` for the full OpenAPI spec.
 

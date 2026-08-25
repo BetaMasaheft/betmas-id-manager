@@ -68,6 +68,20 @@ declare function api:reset-type($request as map(*)) {
 	return roaster:response(200, ids:reset-type($type, $value))
 };
 
+(:~
+ : POST /types/{type}/seed
+ : Bulk-registers ids from a caller-supplied list, skipping any already
+ : registered - idempotent, for one-time seeding from an external system of
+ : record. Manual types only; $errors:BAD_REQUEST covers both unknown type
+ : and auto-type misuse.
+ :)
+declare function api:seed-manual($request as map(*)) {
+	let $type := $request?parameters?type
+	(: JSON arrays decode to XQuery array(*), not xs:string* - unbox with ?* :)
+	let $ids := $request?body?ids?*
+	return roaster:response(200, ids:seed-manual-ids($type, $ids))
+};
+
 declare function api:lookup($name as xs:string) {
 	function-lookup(xs:QName($name), 1)
 };

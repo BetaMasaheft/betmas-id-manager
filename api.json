@@ -67,7 +67,19 @@
 						"content": { "application/json": { "schema": { "$ref": "#/components/schemas/IssuedId" } } }
 					},
 					"400": { "description": "Unknown type" },
-					"409": { "description": "Manual id already registered" }
+					"409": {
+						"description": "Manual id already registered",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"error": { "type": "string" }
+									}
+								}
+							}
+						}
+					}
 				}
 			}
 		},
@@ -166,6 +178,57 @@
 						}
 					},
 					"400": { "description": "Unknown type" }
+				}
+			}
+		},
+		"/types/{type}/seed": {
+			"post": {
+				"summary": "Bulk-register ids from an external system of record (manual types only) - idempotent, skips ids already registered",
+				"operationId": "api:seed-manual",
+				"parameters": [
+					{
+						"name": "type",
+						"in": "path",
+						"required": true,
+						"schema": { "type": "string" }
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"required": ["ids"],
+								"properties": {
+									"ids": {
+										"type": "array",
+										"items": { "type": "string" }
+									}
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"type": { "type": "string" },
+										"total": { "type": "integer" },
+										"registered": { "type": "integer" },
+										"skipped": { "type": "integer" },
+										"skippedUnsafe": { "type": "integer" }
+									}
+								}
+							}
+						}
+					},
+					"400": { "description": "Unknown type, or type is not manual-mode" }
 				}
 			}
 		}

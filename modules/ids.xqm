@@ -140,15 +140,17 @@ declare function ids:list-types() as map(*)* {
 };
 
 declare function ids:id-exists($id as xs:string) as xs:boolean {
-	doc-available(local:doc-path($id))
+	local:is-safe-id($id) and doc-available(local:doc-path($id))
 };
 
 declare function ids:get-id($id as xs:string) as map(*)? {
-	let $doc := local:doc-path($id)
-	return if (doc-available($doc)) then
-		local:to-map(doc($doc)/bim:issued-id)
-	else (
-	)
+	if (not(local:is-safe-id($id))) then (
+	) else
+		let $doc := local:doc-path($id)
+		return if (doc-available($doc)) then
+			local:to-map(doc($doc)/bim:issued-id)
+		else (
+		)
 };
 
 declare function ids:list-ids($type as xs:string?) as map(*)* {
@@ -199,6 +201,34 @@ declare function ids:register-manual-id($type as xs:string, $id as xs:string?) a
 	else
 		let $node := <bim:issued-id createdAt="{ local:now() }" id="{ $id }" mode="manual" type="{ $type }" />
 		return local:store-issued-id($node)
+};
+
+(:~
+ : Bulk-register ids that already exist elsewhere (e.g. a live corpus this
+ : service is being seeded from), skipping any that are already registered.
+ : Idempotent - safe to re-run/resume with overlapping batches. Manual-mode
+ : types only: auto types have no per-id identity to seed, just a counter
+ : (see reset-type).
+ :)
+declare function ids:seed-manual-ids($type as xs:string, $ids as xs:string*) as map(*) {
+	let $info := local:require-known-type($type)
+	return if ($info?mode ne "manual") then
+		local:fail-bad-request("type '" || $type || "' is auto-numbered; seed it via reset-type instead")
+	else
+		let $safeIds := $ids[local:is-safe-id(.)]
+		let $skippedUnsafe := count($ids) - count($safeIds)
+		let $toRegister := $safeIds[not(ids:id-exists(.))]
+		let $_ :=
+			for $id in $toRegister
+			let $node := <bim:issued-id createdAt="{ local:now() }" id="{ $id }" mode="manual" type="{ $type }" />
+			return local:store-issued-id($node)
+		return map {
+			"type": $type,
+			"total": count($ids),
+			"registered": count($toRegister),
+			"skipped": count($safeIds) - count($toRegister),
+			"skippedUnsafe": $skippedUnsafe
+		}
 };
 
 (:~
