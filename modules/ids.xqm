@@ -27,16 +27,8 @@ declare %private function local:fail-bad-request($message as xs:string) {
 	error($errors:BAD_REQUEST, $message)
 };
 
-(:~
- : "Manual id already registered" is semantically a 409
- : Conflict, and roaster's fixed error table has no such status.
- : $bimerrors:CONFLICT exists purely to fill that one gap;
- : modules/api.xql catches it explicitly and maps it to 409 itself.
- :
- : See https://github.com/eeditiones/roaster/pull/134
- :)
 declare %private function local:fail-conflict($message as xs:string) {
-	error(fn:QName("https://betamasaheft.eu/betmas-id-manager/errors", "CONFLICT"), $message)
+	error($errors:CONFLICT, $message)
 };
 
 declare %private function local:require-known-type($type as xs:string?) as map(*) {
