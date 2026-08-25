@@ -99,6 +99,13 @@ export function createApp(store: Store): (req: IncomingMessage, res: ServerRespo
 	const routes = routesFor(ids);
 
 	return async function handleRequest(req, res) {
+		const start = performance.now();
+		const url = new URL(req.url ?? "/", "http://localhost");
+		res.on("finish", () => {
+			const ms = (performance.now() - start).toFixed(1);
+			console.log(`${req.method} ${url.pathname} ${res.statusCode} ${ms}ms`);
+		});
+
 		for (const [name, value] of Object.entries(CORS_HEADERS)) res.setHeader(name, value);
 
 		if (req.method === "OPTIONS") {
@@ -106,8 +113,6 @@ export function createApp(store: Store): (req: IncomingMessage, res: ServerRespo
 			res.end();
 			return;
 		}
-
-		const url = new URL(req.url ?? "/", "http://localhost");
 
 		if (req.method === "GET" && url.pathname === "/api.json") {
 			res.writeHead(200, { "Content-Type": "application/json" });
