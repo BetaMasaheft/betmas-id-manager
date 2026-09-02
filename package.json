@@ -17,7 +17,7 @@
 		"ajv-draft-04": "^1.0.0",
 		"ajv-formats": "^3.0.1",
 		"husky": "^9.1.7",
-		"lint-staged": "^17.3.0",
+		"lint-staged": "^17.4.1",
 		"prettier": "^3.9.6",
 		"typescript": "^5.9.0"
 	},
