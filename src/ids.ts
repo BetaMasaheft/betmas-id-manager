@@ -97,8 +97,8 @@ export function createIdService(store: Store) {
 			throw new BadRequestError(`type '${type}' is not auto-numbered; use register-manual-id`);
 		}
 		const seq = store.nextSequence(knownType);
-		const normalizedSuffix = normalizeSuffix(suffix);
-		const id = `${info.prefix}${formatSequence(seq)}${normalizedSuffix}`;
+		const normalizedSuffix = info.plain ? "" : normalizeSuffix(suffix);
+		const id = info.plain ? String(seq) : `${info.prefix}${formatSequence(seq)}${normalizedSuffix}`;
 		return store.put({
 			id,
 			type: knownType,

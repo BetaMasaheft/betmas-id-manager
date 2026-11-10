@@ -8,16 +8,17 @@ redeployed freely.
 
 ## Entity types
 
-| Collection      | Prefix | Mode   | Format                               |
-| --------------- | ------ | ------ | ------------------------------------ |
-| works           | LIT    | auto   | `LIT` + 4-digit sequence + suffix    |
-| studies         | STU    | auto   | same                                 |
-| narratives      | NAR    | auto   | same                                 |
-| persons         | PRS    | auto   | same                                 |
-| places          | LOC    | auto   | same                                 |
-| institutions    | INS    | auto   | same                                 |
-| manuscripts     | —      | manual | caller supplies the full id verbatim |
-| authority-files | —      | manual | caller supplies the full id verbatim |
+| Collection       | Prefix | Mode   | Format                                                                   |
+| ---------------- | ------ | ------ | ------------------------------------------------------------------------ |
+| works            | LIT    | auto   | `LIT` + 4-digit sequence + suffix                                        |
+| studies          | STU    | auto   | same                                                                     |
+| narratives       | NAR    | auto   | same                                                                     |
+| persons          | PRS    | auto   | same                                                                     |
+| places           | LOC    | auto   | same                                                                     |
+| institutions     | INS    | auto   | same                                                                     |
+| dillmann-entries | —      | auto   | bare sequence number (Dillmann `entry/@n`), no prefix, padding or suffix |
+| manuscripts      | —      | manual | caller supplies the full id verbatim                                     |
+| authority-files  | —      | manual | caller supplies the full id verbatim                                     |
 
 Auto-numbered ids zero-pad the sequence to 4 digits up to 999, then go
 unpadded beyond that (`...0999` then `...1000`) - this replicates

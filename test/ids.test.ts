@@ -15,7 +15,7 @@ function service() {
 test("listTypes lists all 8 known types with correct prefix/mode", () => {
 	const ids = service();
 	const types = ids.listTypes();
-	assert.equal(types.length, 8);
+	assert.equal(types.length, 9);
 
 	const byType = Object.fromEntries(types.map((t) => [t.type, t]));
 	assert.deepEqual(byType.works, { type: "works", prefix: "LIT", mode: "auto" });
@@ -200,4 +200,18 @@ test("many sequential reserves across microtask ticks still produce a clean 1..N
 		sequences,
 		Array.from({ length: N }, (_, i) => i + 1),
 	);
+});
+
+test("dillmann-entries issues the bare sequence number, ignoring any suffix", () => {
+	const ids = service();
+	assert.equal(ids.reserveAutoId("dillmann-entries", "ignored").id, "1");
+	assert.equal(ids.reserveAutoId("dillmann-entries", undefined).id, "2");
+});
+
+test("dillmann-entries continues from a seeded counter, unpadded", () => {
+	const ids = service();
+	ids.resetType("dillmann-entries", 5324);
+	const record = ids.reserveAutoId("dillmann-entries", undefined);
+	assert.equal(record.id, "5325");
+	assert.equal(record.mode === "auto" && record.sequence, 5325);
 });

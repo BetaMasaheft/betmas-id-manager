@@ -34,7 +34,7 @@ test("GET /types returns 200 with all known types", async () => {
 		const res = await req(baseUrl, "GET", "/types");
 		assert.equal(res.status, 200);
 		const types = await res.json();
-		assert.equal(types.length, 8);
+		assert.equal(types.length, 9);
 	});
 });
 
