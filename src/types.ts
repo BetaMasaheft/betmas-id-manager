@@ -1,11 +1,21 @@
 export type TypeName =
-	"works" | "studies" | "narratives" | "persons" | "places" | "institutions" | "manuscripts" | "authority-files";
+	| "works"
+	| "studies"
+	| "narratives"
+	| "persons"
+	| "places"
+	| "institutions"
+	| "manuscripts"
+	| "authority-files"
+	| "dillmann-entries";
 
 export type Mode = "auto" | "manual";
 
 export interface TypeInfo {
 	prefix: string | null;
 	mode: Mode;
+	/** Auto types only: issue the bare sequence number (no prefix, no zero-padding, no suffix). */
+	plain?: boolean;
 }
 
 interface IssuedIdBase {

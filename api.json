@@ -3,7 +3,7 @@
 	"info": {
 		"version": "0.1.0",
 		"title": "betmas-id-manager",
-		"description": "Standalone id-management service for BetaMasaheft: hands out and tracks entity ids for manuscripts, works, persons, places, narratives, studies, institutions and authority-files."
+		"description": "Standalone id-management service for BetaMasaheft: hands out and tracks entity ids for manuscripts, works, persons, places, narratives, studies, institutions, authority-files and Dillmann entries."
 	},
 	"servers": [{ "url": "/", "description": "Relative URL using the current host and port" }],
 	"security": [],
