@@ -1,0 +1,23 @@
+.github/workflows/ci.yml
+  s_8bfb3335156c05::t_1f40e56ad90f54 17,37
+.github/workflows/release.yml
+  s_8bfb3335156c05::t_47bb5d8fcf631e 19
+.github/workflows/static-checks.yml
+  s_8bfb3335156c05::t_7dd398a07a2e24 12
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "6f09d71a5326edd5d2c149b382a27755f35925bd",
+  "prompts": {},
+  "sessions": {
+    "s_8bfb3335156c05": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "643a5d21-eab7-43a8-94bd-0b532756f586",
+        "model": "unknown"
+      },
+      "human_author": "duncdrum <d.paterson@me.com>"
+    }
+  }
+}
